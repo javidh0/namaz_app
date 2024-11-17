@@ -12,3 +12,16 @@ List<Color> getColorGradient(Vaqth x) {
 String getTime(Vaqth x) {
   return "00:00 - 00:00";
 }
+
+List<Map> getMasjids() {
+  List<Map> tr = [];
+  for (int i = 0; i < 50; i++) {
+    Map temp = {
+      "Name": 'Masjid - $i',
+      "Adhan": "00:00",
+      "Iqamat": "00:00",
+    };
+    tr.add(temp);
+  }
+  return tr;
+}

@@ -29,10 +29,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String inputField = "";
+  final ScrollController _controller = ScrollController();
+  final ScrollController _listViewController = ScrollController();
+  bool isCollapsed = false;
+  List<Map> masjids = getMasjids();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
+        controller: _controller,
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
@@ -46,6 +51,11 @@ class _HomeState extends State<Home> {
             stretch: true,
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
+                if (constraints.biggest.height <= 100 && !isCollapsed) {
+                  isCollapsed = true;
+                } else if (constraints.biggest.height >= 250 && isCollapsed) {
+                  isCollapsed = false;
+                }
                 return ClipPath(
                   clipper: (constraints.biggest.height >= 80)
                       ? CurvedBottomClipper()
@@ -93,46 +103,118 @@ class _HomeState extends State<Home> {
           SliverList.list(
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(15),
                 child: TextField(
-                  decoration: InputDecoration().copyWith(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                  style: kFont,
+                  onTap: () {
+                    _controller.animateTo(225,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.bounceInOut);
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Icon(
+                        Icons.search,
+                        size: 30,
+                      ),
+                    ),
+                    focusedBorder: const OutlineInputBorder().copyWith(
+                      borderSide: BorderSide(
+                          color: getColorGradient(Vaqth.magrib)[1], width: 2),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    border: const OutlineInputBorder()
+                        .copyWith(borderRadius: BorderRadius.circular(50)),
+                    hintText: 'Search your Masjid',
                   ),
-                  onChanged: (val) {
-                    setState(() {
-                      inputField = val;
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: ListView.builder(
+                  controller: _listViewController,
+                  itemCount: masjids.length,
+                  itemBuilder: (context, index) {
+                    _listViewController.addListener(() {
+                      _controller.animateTo(
+                        225,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.decelerate,
+                      );
                     });
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: Container(
+                        height: 100,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 5.0,
+                                offset: const Offset(0.0, 3.0),
+                              ),
+                            ]),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 15,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                masjids[index]['Name'],
+                                style: kFont.copyWith(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Adhan : ${masjids[index]['Adhan']}",
+                                    style: kFont.copyWith(fontSize: 15),
+                                  ),
+                                  Text(
+                                    "   ",
+                                    style: kFont.copyWith(fontSize: 15),
+                                  ),
+                                  Text(
+                                    "Iqamat : ${masjids[index]['Iqamat']}",
+                                    style: kFont.copyWith(fontSize: 15),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),
+              const AddWhiteScrollPadding(),
             ],
           ),
-          const ForPaddingWidgets(),
         ],
       ),
     );
   }
 }
 
-class ForPaddingWidgets extends StatelessWidget {
-  const ForPaddingWidgets({
-    super.key,
-  });
+class AddWhiteScrollPadding extends StatelessWidget {
+  const AddWhiteScrollPadding({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SliverFixedExtentList(
-      itemExtent: 50.0,
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          return Container(
-            alignment: Alignment.center,
-            color: Colors.lightBlue[100 * (index % 9)],
-            child: Text('List Item $index'),
-          );
-        },
-      ),
+    return Container(
+      color: Colors.amber,
+      height: MediaQuery.of(context).size.height - kToolbarHeight,
     );
   }
 }
