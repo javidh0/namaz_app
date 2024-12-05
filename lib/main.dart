@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:namaz_app/screens/location_search/location.dart';
+import 'package:namaz_app/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 import 'screens/home_screen/home.dart';
 
@@ -11,11 +14,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const Home(),
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+      ],
+      child: MaterialApp(
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const Home(),
+          '/location_search': (context) => const SearchLocationWidget()
+        },
+      ),
     );
   }
 }
