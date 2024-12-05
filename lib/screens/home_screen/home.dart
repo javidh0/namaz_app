@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:namaz_app/apis/api.dart';
 import 'package:namaz_app/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class CurvedBottomClipper extends CustomClipper<Path> {
   @override
@@ -106,6 +107,12 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.all(15),
                 child: TextField(
                   style: kFont,
+                  onChanged: (key) {
+                    setState(() {
+                      masjids =
+                          masjisdFilter(key, getMasjids()); //TODO : Optimize
+                    });
+                  },
                   onTap: () {
                     _controller.animateTo(225,
                         duration: const Duration(milliseconds: 200),
@@ -130,11 +137,36 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25, bottom: 10),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on_outlined,
+                      size: 25,
+                      color: Color.fromARGB(255, 153, 135, 135),
+                    ),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/location_search");
+                      },
+                      child: Text(
+                        context.watch<LocationProvider>().getLocationName(),
+                        style: kFont.copyWith(
+                          fontSize: 15,
+                          color: const Color.fromARGB(255, 89, 84, 84),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.8,
                 child: ListView.builder(
                   controller: _listViewController,
-                  itemCount: masjids.length,
+                  itemCount: masjids.length + 2,
                   itemBuilder: (context, index) {
                     _listViewController.addListener(() {
                       _controller.animateTo(
@@ -143,58 +175,62 @@ class _HomeState extends State<Home> {
                         curve: Curves.decelerate,
                       );
                     });
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 5.0,
-                                offset: const Offset(0.0, 3.0),
-                              ),
-                            ]),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 15,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                masjids[index]['Name'],
-                                style: kFont.copyWith(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                    if (index < masjids.length) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 5.0,
+                                  offset: const Offset(0.0, 3.0),
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Adhan : ${masjids[index]['Adhan']}",
-                                    style: kFont.copyWith(fontSize: 15),
+                              ]),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 15,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  masjids[index]['Name'],
+                                  style: kFont.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Text(
-                                    "   ",
-                                    style: kFont.copyWith(fontSize: 15),
-                                  ),
-                                  Text(
-                                    "Iqamat : ${masjids[index]['Iqamat']}",
-                                    style: kFont.copyWith(fontSize: 15),
-                                  )
-                                ],
-                              )
-                            ],
+                                  textAlign: TextAlign.left,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Adhan : ${masjids[index]['Adhan']}",
+                                      style: kFont.copyWith(fontSize: 15),
+                                    ),
+                                    Text(
+                                      "   ",
+                                      style: kFont.copyWith(fontSize: 15),
+                                    ),
+                                    Text(
+                                      "Iqamat : ${masjids[index]['Iqamat']}",
+                                      style: kFont.copyWith(fontSize: 15),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      return const SizedBox(height: 100);
+                    }
                   },
                 ),
               ),
@@ -214,7 +250,7 @@ class AddWhiteScrollPadding extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.amber,
-      height: MediaQuery.of(context).size.height - kToolbarHeight,
+      height: kToolbarHeight,
     );
   }
 }
