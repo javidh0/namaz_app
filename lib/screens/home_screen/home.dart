@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namaz_app/apis/api.dart';
+import 'package:namaz_app/screens/masjid_screen/masjid_screen.dart';
 import 'package:namaz_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -178,52 +179,66 @@ class _HomeState extends State<Home> {
                     if (index < masjids.length) {
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                        child: Container(
-                          height: 100,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  blurRadius: 5.0,
-                                  offset: const Offset(0.0, 3.0),
-                                ),
-                              ]),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 15,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  masjids[index]['Name'],
-                                  style: kFont.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                        child: GestureDetector(
+                          onTap: () {
+                            print("tap");
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return MasjidScreen(
+                                  name: masjids[index]['Name'],
+                                  color_: getColorGradient(Vaqth.magrib),
+                                );
+                              },
+                            ));
+                          },
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 5.0,
+                                    offset: const Offset(0.0, 3.0),
                                   ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Adhan : ${masjids[index]['Adhan']}",
-                                      style: kFont.copyWith(fontSize: 15),
+                                ]),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 15,
+                              ),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    masjids[index]['Name'],
+                                    style: kFont.copyWith(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Text(
-                                      "   ",
-                                      style: kFont.copyWith(fontSize: 15),
-                                    ),
-                                    Text(
-                                      "Iqamat : ${masjids[index]['Iqamat']}",
-                                      style: kFont.copyWith(fontSize: 15),
-                                    )
-                                  ],
-                                )
-                              ],
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Adhan : ${masjids[index]['Adhan']}",
+                                        style: kFont.copyWith(fontSize: 15),
+                                      ),
+                                      Text(
+                                        "   ",
+                                        style: kFont.copyWith(fontSize: 15),
+                                      ),
+                                      Text(
+                                        "Iqamat : ${masjids[index]['Iqamat']}",
+                                        style: kFont.copyWith(fontSize: 15),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const Home(),
-          '/location_search': (context) => const SearchLocationWidget()
+          '/location_search': (context) => const SearchLocationWidget(),
         },
       ),
     );

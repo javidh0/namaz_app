@@ -9,6 +9,19 @@ List<Color> getColorGradient(Vaqth x) {
   ];
 }
 
+List<Map> getTimmings(String masjidId) {
+  List<Map> tr = [];
+  List<String> temp = ["Fajir", "Duhar", "Asar", "Magrib", "Isha"];
+  for (var element in temp) {
+    tr.add({
+      "Name": element,
+      "Adhan": "00:00",
+      "Iqamat": "00:00",
+    });
+  }
+  return tr;
+}
+
 class LocationData {
   final List<Map> _location = [];
   LocationData() {
@@ -50,6 +63,7 @@ List<Map> getMasjids({String key = ""}) {
       "Name": 'Masjid - $i',
       "Adhan": "01:00",
       "Iqamat": "01:10",
+      "Id": "#${2010 + i}"
     };
     tr.add(temp);
   }
